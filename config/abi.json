@@ -1,0 +1,74 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_ID",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_taxNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_transactionNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amountPayed",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_yearlyIncome",
+				"type": "uint256"
+			}
+		],
+		"name": "addTaxDetails",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"name": "taxDetails",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "ID",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "taxNumber",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "transactionNumber",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amountPayed",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "yearlyIncome",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]

@@ -1,7 +1,29 @@
 import { useState } from "react";
 import "./style.css";
+import { useEffect, useState } from "react";
+import abi from "../config/abi.json";
+import { ethers, encodeBytes32String } from "ethers";
+
+
 
 export default function TaxPaymentForm() {
+  const contractadd = "0xB3551e4f487052c1C30a0A47420C6578Cdbb5B3D";
+  const [address, setAddress] = useState("");
+  const [contract, setContract] = useState<ethers.Contract | null>(null);
+  useEffect(() => {
+    async function initialize() {
+      if (window.ethereum) {
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const address = await signer.getAddress();
+        const contract = new ethers.Contract(contractadd, abi, signer);
+        setAddress(address);
+        setContract(contract);
+      }
+    }
+    initialize();
+  });
+
   const [form, setForm] = useState({
     nationalID: "",
     transactionNumber: "",
@@ -82,9 +104,25 @@ export default function TaxPaymentForm() {
 
     const transactionNumber = generateTransactionNumber(form.amountPaid, form.yearlyIncome);
     setForm({ ...form, transactionNumber });
+    setPayDisabled(true);
+
+    async function addTaxDetails() {
+      console.log("FUCK");
+      const log = await contract?.addTaxDetails(form.nationalID, form.taxNumber, form.transactionNumber, form.amountPaid, form.yearlyIncome);
+      console.log(log);
+      getTaxDetails();
+    }
+
+    async function getTaxDetails() {
+      const log = await contract?.taxDetails(encodeBytes32String(form.nationalID));
+      console.log(log);
+    }
 
     setTimeout(() => {
       alert(`Transaction Successful\nTransaction Number: ${transactionNumber}`);
+      saveToFile(form.nationalID);
+      addTaxDetails();
+
       setPayDisabled(false);
     }, 100);
   };
