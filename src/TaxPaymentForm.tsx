@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./style.css";
 import { useEffect, useState } from "react";
 import abi from "../config/abi.json";
