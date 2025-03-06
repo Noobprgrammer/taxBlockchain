@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./style.css";
 
 export default function TaxPaymentForm() {
   const [form, setForm] = useState({
@@ -27,16 +28,28 @@ export default function TaxPaymentForm() {
     const date = getCurrentDate();
   
     try {
-      await fetch("http://localhost:5000/save-tax-record", {
+      const response = await fetch("http://localhost:5000/save-tax-record", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nationalID, date }),
       });
+
+      const data = await response.json();
+
+      if (response.status === 400) {
+        alert(`Error: ${data.message}`); // 🚨 Notify if already paid
+        setPayDisabled(false);
+        return false;
+      } else if (response.status === 200) {
+        return true;
+      }
     } catch (error) {
       console.error("Error saving data:", error);
+      alert("An error occurred while processing your request.");
+      setPayDisabled(false);
+      return false;
     }
   };
-  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -55,47 +68,55 @@ export default function TaxPaymentForm() {
     setForm(updatedForm);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.nationalID || !form.taxNumber || !form.amountPaid || !form.yearlyIncome) {
       alert("All fields are required.");
       return;
     }
+
+    setPayDisabled(true);
+
+    const canProceed = await saveToFile(form.nationalID);
+    if (!canProceed) return;
+
     const transactionNumber = generateTransactionNumber(form.amountPaid, form.yearlyIncome);
     setForm({ ...form, transactionNumber });
-    setPayDisabled(true);
 
     setTimeout(() => {
       alert(`Transaction Successful\nTransaction Number: ${transactionNumber}`);
-      saveToFile(form.nationalID);
       setPayDisabled(false);
     }, 100);
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <h2 className="text-xl font-bold">Tax Payment Submission</h2>
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <ul className="space-y-3">
-          <li>
-            <label className="block font-medium">National ID:</label>
-            <input type="text" name="nationalID" value={form.nationalID} onChange={handleChange} className="w-full p-2 border rounded" required />
-          </li>
-          <li>
-            <label className="block font-medium">Tax Number:</label>
-            <input type="text" name="taxNumber" value={form.taxNumber} onChange={handleChange} className="w-full p-2 border rounded" required />
-          </li>
-          <li className="w-full p-2 border rounded bg-gray-100">
-            <label className="block font-medium">Amount Paid:</label>
-            {form.amountPaid || "N/A"}
-          </li>
-          <li>
-            <label className="block font-medium">Yearly Income:</label>
-            <input type="number" name="yearlyIncome" value={form.yearlyIncome} onChange={handleChange} className="w-full p-2 border rounded" required />
-          </li>
-        </ul>
-        <button type="submit" className="w-full p-2 bg-blue-600 text-white rounded" disabled={payDisabled}>Pay</button>
-      </form>
-    </div>
+    <div className="container">
+    <h2 className="title">Tax Payment Submission</h2>
+    <form onSubmit={handleSubmit} className="form">
+      <ul className="form-list">
+        <li>
+          <label className="label">National ID:</label>
+          <input type="text" name="nationalID" value={form.nationalID} onChange={handleChange} className="input" required />
+        </li>
+        <li>
+          <label className="label">Tax Number:</label>
+          <input type="text" name="taxNumber" value={form.taxNumber} onChange={handleChange} className="input" required />
+        </li>
+        <li className="amount-box">
+          <label className="amount-label">Amount Paid:</label>
+          {form.amountPaid || "N/A"}
+        </li>
+        <li>
+          <label className="label">Yearly Income:</label>
+          <input type="number" name="yearlyIncome" value={form.yearlyIncome} onChange={handleChange} className="input" required />
+        </li>
+      </ul>
+      <div >
+      <button type="submit" className="submit-btn" disabled={payDisabled}>
+        Pay
+      </button>
+      </div>
+    </form>
+  </div>
   );
 }
