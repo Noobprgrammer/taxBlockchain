@@ -8,6 +8,7 @@ import { ethers, encodeBytes32String } from "ethers";
 export default function TaxPaymentForm() {
   const contractadd = "0xd01a07990bDbC2A0ad8149b3481950DD7C8Df9f3";
   const [address, setAddress] = useState("");
+  console.log(address);
   const [contract, setContract] = useState<ethers.Contract | null>(null);
   useEffect(() => {
     async function initialize() {
