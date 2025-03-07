@@ -6,7 +6,7 @@ import { ethers, encodeBytes32String } from "ethers";
 
 
 export default function TaxPaymentForm() {
-  const contractadd = "0xB3551e4f487052c1C30a0A47420C6578Cdbb5B3D";
+  const contractadd = "0xd01a07990bDbC2A0ad8149b3481950DD7C8Df9f3";
   const [address, setAddress] = useState("");
   const [contract, setContract] = useState<ethers.Contract | null>(null);
   useEffect(() => {
@@ -82,6 +82,8 @@ export default function TaxPaymentForm() {
         updatedForm.amountPaid = "300";
       } else if (income >= 24001 && income <= 36000) {
         updatedForm.amountPaid = "600";
+      } else if (income > 36000) {
+        updatedForm.amountPaid = "900";
       } else {
         updatedForm.amountPaid = "";
       }
@@ -106,14 +108,7 @@ export default function TaxPaymentForm() {
     setPayDisabled(true);
 
     async function addTaxDetails() {
-      console.log("FUCK");
       const log = await contract?.addTaxDetails(form.nationalID, form.taxNumber, form.transactionNumber, form.amountPaid, form.yearlyIncome);
-      console.log(log);
-      getTaxDetails();
-    }
-
-    async function getTaxDetails() {
-      const log = await contract?.taxDetails(encodeBytes32String(form.nationalID));
       console.log(log);
     }
 

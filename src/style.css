@@ -27,14 +27,14 @@ body{
   .title {
     font-size: 2rem;
     font-weight: bold;
-    display: inline-block; /* Keeps the box size to the text */
-    padding: 1.2rem; /* Adds spacing inside the box */
-    border: 2px solid white; /* Adds a black border */
-    background-color: #2563eb; /* Light gray background (change as needed) */
-    color: white; /* Text color */
-    font-weight: bold; /* Makes text bold */
-    border-radius: 5px; /* Rounds the corners */
-    text-align: center; /* Centers the text */
+    display: inline-block; 
+    padding: 1.2rem;
+    border: 2px solid white; 
+    background-color: #2563eb; 
+    color: white; 
+    font-weight: bold; 
+    border-radius: 5px;
+    text-align: center; 
   }
   
   .form {
@@ -51,13 +51,13 @@ body{
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centers input fields */
+    align-items: center;
     gap: 1rem;
   }
   
   li {
     width: 100%;
-    max-width: 20rem; /* Ensures consistent width */
+    max-width: 20rem;
     display: flex;
     flex-direction: column;
   }
@@ -74,7 +74,7 @@ body{
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 0.25rem;
-    text-align: center; /* Centers input text */ 
+    text-align: center;
   }
   
   .amount-box {
@@ -84,13 +84,13 @@ body{
     border: 1px solid #ccc;
     border-radius: 0.25rem;
     background-color: #f3f4f6;
-    text-align: center; /* Centers text inside */
+    text-align: center;
   }
   .amount-label {
     text-align: left;
     font-size: 1.2rem;
-    color: black; /* Change to any color you want */
-    font-weight: bold; /* Optional: Makes it stand out */
+    color: black;
+    font-weight: bold;
   }
 
   .button-container {
