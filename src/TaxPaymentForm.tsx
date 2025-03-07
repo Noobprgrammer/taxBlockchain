@@ -37,41 +37,6 @@ export default function TaxPaymentForm() {
     return (parseInt(amountPaid) + parseInt(yearlyIncome) + randomFourDigit).toString();
   };
 
-  const getCurrentDate = () => {
-    const date = new Date();
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}${month}${year}`;
-  };
-
-  const saveToFile = async (nationalID: string) => {
-    const date = getCurrentDate();
-  
-    try {
-      const response = await fetch("http://localhost:5000/save-tax-record", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nationalID, date }),
-      });
-
-      const data = await response.json();
-
-      if (response.status === 400) {
-        alert(`Error: ${data.message}`); // 🚨 Notify if already paid
-        setPayDisabled(false);
-        return false;
-      } else if (response.status === 200) {
-        return true;
-      }
-    } catch (error) {
-      console.error("Error saving data:", error);
-      alert("An error occurred while processing your request.");
-      setPayDisabled(false);
-      return false;
-    }
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     let updatedForm = { ...form, [name]: value };
@@ -100,8 +65,11 @@ export default function TaxPaymentForm() {
 
     setPayDisabled(true);
 
-    const canProceed = await saveToFile(form.nationalID);
-    if (!canProceed) return;
+    const canProceed = await isNewRecord(form.nationalID);
+    if (!canProceed) {
+      alert("The Specified NID Has Already Paid Their Taxes.");
+      return;
+    };
 
     const transactionNumber = generateTransactionNumber(form.amountPaid, form.yearlyIncome);
     setForm({ ...form, transactionNumber });
@@ -112,9 +80,20 @@ export default function TaxPaymentForm() {
       console.log(log);
     }
 
+    async function getTaxDetails(nationalID: string) {
+      const taxDetails = await contract?.taxDetails(encodeBytes32String(nationalID));
+      console.log(taxDetails);
+      return taxDetails;
+    }
+
+    async function isNewRecord(nationalID: string) {
+      const taxDetails = await getTaxDetails(nationalID);
+
+      return taxDetails[0] == encodeBytes32String("") || taxDetails[1] == encodeBytes32String("");
+    }
+
     setTimeout(() => {
       alert(`Transaction Successful\nTransaction Number: ${transactionNumber}`);
-      saveToFile(form.nationalID);
       addTaxDetails();
 
       setPayDisabled(false);
